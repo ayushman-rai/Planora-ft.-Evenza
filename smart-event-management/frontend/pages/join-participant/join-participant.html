@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Participants — Planora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="join-participant.css" />
+</head>
+<body>
+
+<!-- Starfield -->
+<canvas id="starfield"></canvas>
+
+<!-- Ambient Orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <div class="nav-inner">
+        <a href="../landing/index.html" class="nav-logo">
+            <div class="logo-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <span>Planora</span>
+        </a>
+        <div class="nav-center" id="navEventName">
+            <span class="nav-event-label">Event</span>
+            <span class="nav-event-title" id="navTitle">Tech Summit 2025</span>
+        </div>
+        <div class="nav-actions">
+            <button class="btn-outline-sm" onclick="exportCSV()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Export
+            </button>
+            <a href="../organizer-dashboard/organizer-dashboard.html" class="btn-outline-sm">Dashboard</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main -->
+<main class="main-wrapper">
+
+    <!-- Page Header -->
+    <section class="page-header" id="pageHeader">
+        <div class="header-left">
+            <div class="header-badge">
+                <span class="badge-dot"></span>
+                Participant Management
+            </div>
+            <h1 class="page-title">Joined <span class="gradient-text">Participants</span></h1>
+            <p class="page-subtitle">View, manage, and track everyone who has joined your event.</p>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statTotal">0</span>
+                    <span class="stat-label">Total Registered</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statCheckedIn">0</span>
+                    <span class="stat-label">Checked In</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon amber">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statPending">0</span>
+                    <span class="stat-label">Pending</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon cyan">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="22 4 12 14.01 9 11.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-value" id="statCapacity">0%</span>
+                    <span class="stat-label">Capacity Filled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capacity Bar -->
+        <div class="capacity-bar-wrap">
+            <div class="capacity-bar-track">
+                <div class="capacity-bar-fill" id="capacityBarFill"></div>
+            </div>
+            <span class="capacity-bar-label" id="capacityBarLabel">0 / 0 spots filled</span>
+        </div>
+    </section>
+
+    <!-- Toolbar -->
+    <div class="toolbar" id="toolbar">
+        <!-- Search -->
+        <div class="search-wrap">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search by name, email or ID…" oninput="handleSearch()" />
+            <button class="search-clear hidden" id="searchClear" onclick="clearSearch()">✕</button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-group">
+            <button class="filter-btn active" data-filter="all"      onclick="setFilter('all', this)">All</button>
+            <button class="filter-btn"        data-filter="checked"  onclick="setFilter('checked', this)">Checked In</button>
+            <button class="filter-btn"        data-filter="pending"  onclick="setFilter('pending', this)">Pending</button>
+            <button class="filter-btn"        data-filter="vip"      onclick="setFilter('vip', this)">VIP</button>
+        </div>
+
+        <!-- Sort -->
+        <div class="sort-wrap">
+            <select class="sort-select" id="sortSelect" onchange="handleSort()">
+                <option value="name-asc">Name A→Z</option>
+                <option value="name-desc">Name Z→A</option>
+                <option value="joined-desc">Latest Joined</option>
+                <option value="joined-asc">Oldest Joined</option>
+                <option value="status">By Status</option>
+            </select>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="view-btn active" id="viewGrid" onclick="setView('grid')" title="Grid view">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+            <button class="view-btn" id="viewList" onclick="setView('list')" title="List view">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="3.01" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="12" x2="3.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="18" x2="3.01" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+
+        <!-- Bulk Actions (shown when items selected) -->
+        <div class="bulk-actions hidden" id="bulkActions">
+            <span class="bulk-count" id="bulkCount">0 selected</span>
+            <button class="bulk-btn green" onclick="bulkCheckIn()">Check In All</button>
+            <button class="bulk-btn red"   onclick="bulkRemove()">Remove</button>
+            <button class="bulk-clear"     onclick="clearSelection()">✕</button>
+        </div>
+    </div>
+
+    <!-- Participant Grid / List -->
+    <div class="participants-grid" id="participantsGrid">
+        <!-- Populated by JS -->
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state hidden" id="emptyState">
+        <div class="empty-icon">🔍</div>
+        <h3>No participants found</h3>
+        <p>Try adjusting your search or filter.</p>
+        <button class="btn-outline-sm" onclick="clearSearch(); setFilter('all', document.querySelector('[data-filter=all]'))">Clear Filters</button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+</main>
+
+<!-- Participant Detail Drawer -->
+<div class="drawer-overlay hidden" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer hidden" id="drawer">
+    <div class="drawer-header">
+        <h3 class="drawer-title">Participant Details</h3>
+        <button class="drawer-close" onclick="closeDrawer()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+        <!-- Populated by JS -->
+    </div>
+</div>
+
+<!-- QR Modal -->
+<div class="modal-overlay hidden" id="qrOverlay" onclick="closeQR()">
+    <div class="qr-modal" onclick="event.stopPropagation()">
+        <div class="qr-modal-header">
+            <h3>Entry Ticket</h3>
+            <button class="drawer-close" onclick="closeQR()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+        <div class="qr-body">
+            <div class="qr-ticket">
+                <div class="ticket-top">
+                    <div class="ticket-event-name" id="qrEventName">Tech Summit 2025</div>
+                    <div class="ticket-participant" id="qrParticipantName">John Doe</div>
+                    <div class="ticket-role-badge" id="qrRoleBadge">Participant</div>
+                </div>
+                <div class="ticket-divider">
+                    <div class="ticket-notch left"></div>
+                    <div class="ticket-dashes"></div>
+                    <div class="ticket-notch right"></div>
+                </div>
+                <div class="ticket-bottom">
+                    <canvas id="qrCanvas" width="160" height="160"></canvas>
+                    <div class="ticket-id" id="qrTicketId">#PLN-00001</div>
+                    <div class="ticket-date" id="qrTicketDate">Apr 20, 2025</div>
+                </div>
+            </div>
+            <div class="qr-actions">
+                <button class="btn-purple" onclick="downloadTicket()">Download Ticket</button>
+                <button class="btn-outline-sm" onclick="closeQR()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Participant Modal -->
+<div class="modal-overlay hidden" id="addOverlay" onclick="if(event.target===this) closeAdd()">
+    <div class="add-modal" onclick="event.stopPropagation()">
+        <div class="qr-modal-header">
+            <h3>Add Participant Manually</h3>
+            <button class="drawer-close" onclick="closeAdd()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+        </div>
+        <div class="add-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" class="form-input" id="addName" placeholder="e.g. Priya Sharma" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" id="addEmail" placeholder="priya@example.com" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" id="addPhone" placeholder="+91 98765 43210" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role Tag</label>
+                    <select class="form-input" id="addRole">
+                        <option value="participant">Participant</option>
+                        <option value="vip">VIP</option>
+                        <option value="speaker">Speaker</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notes</label>
+                <textarea class="form-input form-textarea" id="addNotes" placeholder="Any special requirements or notes…"></textarea>
+            </div>
+            <div class="add-actions">
+                <button class="btn-outline-sm" onclick="closeAdd()">Cancel</button>
+                <button class="btn-purple" onclick="addParticipantManual()">Add Participant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openAdd()" title="Add participant manually">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+</button>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="join-participant.js"></script>
+</body>
+</html>
